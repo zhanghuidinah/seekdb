@@ -320,8 +320,8 @@ int ObObjectStorageInfo::set(const common::ObStorageType device_type, const char
     LOG_WARN("storage info init twice", K(ret));
   } else if (FALSE_IT(device_type_ = device_type)){
   } else if (OB_ISNULL(storage_info) || strlen(storage_info) == 0) {
-    // when device_type is file or hdfs, storage_info can be empty
-    if (OB_STORAGE_FILE != device_type_ && OB_STORAGE_HDFS != device_type_) {
+    // when device_type is file, storage_info can be empty
+    if (OB_STORAGE_FILE != device_type_) {
       ret = OB_INVALID_BACKUP_DEST;
       LOG_WARN("storage info is invalid", K(ret), KP(storage_info));
     }
@@ -354,7 +354,7 @@ int ObObjectStorageInfo::validate_arguments() const
   if (OB_UNLIKELY(!ObObjectStorageInfo::is_valid())) {
     ret = OB_INVALID_ARGUMENT;
     OB_LOG(WARN, "invalid argument", K(ret), K(device_type_));
-  } else if (OB_STORAGE_FILE != device_type_ && OB_STORAGE_HDFS != device_type_) {
+  } else if (OB_STORAGE_FILE != device_type_) {
     if (OB_UNLIKELY(0 == strlen(endpoint_))) {
       ret = OB_INVALID_BACKUP_DEST;
       LOG_WARN("backup device is not nfs, endpoint do not allow to be empty", K(ret),
@@ -696,8 +696,7 @@ int ObObjectStorageInfo::get_info_str_(char *storage_info, const int64_t info_le
   } else if (OB_ISNULL(storage_info) || OB_UNLIKELY(info_len <= 0)) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid args", K(ret), KP(storage_info), K(info_len));
-  } else if (OB_STORAGE_FILE != device_type_ &&
-             OB_STORAGE_HDFS != device_type_ && !is_assume_role_mode_) {
+  } else if (OB_STORAGE_FILE != device_type_ && !is_assume_role_mode_) {
     // Access object storage by ak/sk
     if (OB_FAIL(get_access_key_(key, sizeof(key)))) {
       LOG_WARN("failed to get access key", K(ret));
